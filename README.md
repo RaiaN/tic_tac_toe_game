@@ -1,1 +1,1 @@
-# tic_tac_toe_with_xzibit
+Variation of tic-tac-toe game motivated by xzibit show
