@@ -39,7 +39,7 @@ var MenuLayer = cc.Layer.extend({
     },
 
     onPlay: function(callback) {
-
+        cc.director.runScene(new GameScreenScene());
     },
 
     onExit: function(callback) {
@@ -49,7 +49,7 @@ var MenuLayer = cc.Layer.extend({
 
 
 var MenuScene = cc.Scene.extend({
-    onEnter:function () {
+    onEnter: function () {
         this._super();
 
         this.addChild(new BackgroundLayer());

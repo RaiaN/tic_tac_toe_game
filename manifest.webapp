@@ -1,7 +1,7 @@
 {
   "version": "1.0",
-  "name": "tic_tac_toe_game",
-  "description": "tic_tac_toe_game",
+  "name": "tic_tac_toe",
+  "description": "tic_tac_toe",
   "launch_path": "/index.html",
   "icons": {
     "128": "/res/icon.png"
