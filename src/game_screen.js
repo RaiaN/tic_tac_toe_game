@@ -6,15 +6,17 @@ Game = {
 };
 
 var GameScreenLayer = cc.Layer.extend({
-    gridModel : null,
-    fieldLayer : null,
+    fieldController : null,
 
     ctor: function() {
         this._super();
-        this.gridModel = new GridModel(Game.CELLS_PER_SIDE, new GridView(Game.CELLS_PER_SIDE));
-        this.fieldLayer = new FieldLayer(this.gridModel);
-        this.addChild(this.fieldLayer);
+        this.fieldController = new FieldController();
+        cc.eventManager.addListener({
+            event: cc.EventListener.MOUSE,
+            onMouseDown: this.fieldController.onClick
+        }, this.fieldController);
 
+        this.addChild(this.fieldController);
         return true;
     }
 });

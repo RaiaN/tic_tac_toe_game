@@ -5,12 +5,11 @@ var CellView = cc.Layer.extend({
     colorLayer : null,
     gridModel : null,
 
-    ctor: function (coord, pos, cellSize, gridModel) {
+    ctor: function (coord, pos, cellSize) {
         this._super();
         this.coord = coord;
         this.position = pos;
         this.size = cellSize;
-        this.gridModel = gridModel;
 
         this.colorLayer = new cc.LayerColor();
         this.colorLayer.setContentSize(cellSize);
@@ -25,6 +24,14 @@ var CellView = cc.Layer.extend({
 
         this.colorLayer.addChild(label);
         this.addChild(this.colorLayer);
+    },
+
+    getXPos: function() {
+        return this.position.x;
+    },
+
+    getYPos : function() {
+        return this.position.y;
     },
 
     updateCellView: function(computerTurn) {

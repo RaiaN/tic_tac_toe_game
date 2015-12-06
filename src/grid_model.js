@@ -18,8 +18,6 @@ var GridModel = cc.Node.extend({
     totalCount : null,
     totalCells : null,
 
-    ignoreClicks : false,
-
     MAIN_DIAG_INDEX : -1,
     OTHER_DIAG_INDEX : -1,
 
@@ -49,28 +47,10 @@ var GridModel = cc.Node.extend({
         this.OTHER_DIAG_INDEX = 2 * this.fieldSize + 1;
     },
 
-    checkClickInsideArea : function(cursorPos, cellPos, cellSize) {
-        var insideX = cursorPos.x >= cellPos.x && cursorPos.x <= cellPos.x + cellSize.width;
-        var insideY = cursorPos.y >= cellPos.y && cursorPos.y <= cellPos.y + cellSize.height;
-        return insideX && insideY;
-    },
-
-    onCellClick: function(callback) {
-        var cell = callback.getCurrentTarget();
-        var cursorPos = callback.getLocation();
-        if (!cell.gridModel.checkClickInsideArea(cursorPos, cell.position, cell.size)) {
-            return;
-        }
-
+    onCellClick: function(coord) {
         var computerTurn = false;
-        var res = cell.gridModel.processClick(cell.coord, computerTurn);
-        if (res !== ClickResult.TRY_AGAIN) {
-            cell.gridModel.updateView(cell.coord, res, computerTurn);
-        }
-        if (res != ClickResult.VICTORY_PLAYER) {
-            cell.gridModel.simulateClick();
-        }
-        return true;
+        var res = this.processClick(coord, computerTurn);
+        this.updateView(coord, res, computerTurn);
     },
 
     findEmptyCell: function() {
@@ -126,6 +106,17 @@ var GridModel = cc.Node.extend({
     },
 
     updateView: function(pos, res, computerTurn) {
+        if (res == ClickResult.TRY_AGAIN) {
+            return;
+        }
         this.gridView.updateView(pos, res, computerTurn);
+
+        if (res == ClickResult.VICTORY_COMPUTER) {
+            this.gridView.showDefeatMessage();
+        } else if (res == ClickResult.VICTORY_PLAYER) {
+            this.gridView.showVictoryMessage();
+        } else if (res == ClickResult.DRAW) {
+            this.gridView.showDrawMessage();
+        }
     }
 });
