@@ -16,6 +16,9 @@
         "src/resource.js",
         "src/background.js",
         "src/cell.js",
-        "src/game_screen.js"
+        "src/field_layer.js",
+        "src/game_screen.js",
+        "src/grid_model.js",
+        "src/grid_view.js"
     ]
 }
