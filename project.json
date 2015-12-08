@@ -19,6 +19,7 @@
         "src/field_controller.js",
         "src/game_screen.js",
         "src/grid_model.js",
-        "src/grid_view.js"
+        "src/grid_view.js",
+        "src/scoreboard_view.js"
     ]
 }

@@ -1,6 +1,4 @@
 var MenuLayer = cc.Layer.extend({
-    FONT_SIZE : 28,
-    
     ctor: function () {
         this._super();
         this.addChild(this.createMenu());
@@ -9,21 +7,19 @@ var MenuLayer = cc.Layer.extend({
     createMenu : function constructMenu() {
         var windowSize = cc.winSize;
 
-        var menuTitle = new ccui.Button();
-        menuTitle.setTitleText(res.MenuTitle);
-        menuTitle.setTitleColor(cc.color(255, 0, 0, 255));
-        menuTitle.setTitleFontSize(this.FONT_SIZE);
+        var menuTitle = new ccui.Text(Game.MenuTitle, "Arial", Game.FONT_SIZE);
+        menuTitle.setTextColor(cc.color(255, 0, 0, 255));
 
         var menuPlayButton = new ccui.Button();
-        menuPlayButton.setTitleText(res.MenuStartButtonCaption);
+        menuPlayButton.setTitleText(Game.MenuStartButtonCaption);
         menuPlayButton.setTitleColor(cc.color(255, 0, 0, 255));
-        menuPlayButton.setTitleFontSize(this.FONT_SIZE);
+        menuPlayButton.setTitleFontSize(Game.FONT_SIZE);
         menuPlayButton.addClickEventListener(this.onPlay);
 
         var menuExitButton = new ccui.Button();
-        menuExitButton.setTitleText(res.MenuExitButtonCaption);
+        menuExitButton.setTitleText(Game.MenuExitButtonCaption);
         menuExitButton.setTitleColor(cc.color(255, 0, 0, 255));
-        menuExitButton.setTitleFontSize(this.FONT_SIZE);
+        menuExitButton.setTitleFontSize(Game.FONT_SIZE);
         menuExitButton.addClickEventListener(this.onExit);
 
         var menuLayout = new ccui.Layout();

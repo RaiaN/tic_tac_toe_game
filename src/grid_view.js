@@ -2,9 +2,6 @@ var GridView = cc.Node.extend({
     gridView : null,
     fieldSize : null,
 
-    rowCellBorders : [],
-    colCellBorders : [],
-
     ctor: function(fieldSize, contentSize) {
         this._super();
         this.fieldSize = fieldSize;
@@ -23,35 +20,39 @@ var GridView = cc.Node.extend({
 
         var cellTrueWidth = cellWidth - Game.X_MARGIN / 2;
         var cellTrueHeight = cellHeight - Game.Y_MARGIN / 2;
-        var cellSizeWithMargins = cc.size(cellTrueWidth, cellTrueHeight);
+        this.cellSizeWithMargins = cc.size(cellTrueWidth, cellTrueHeight);
 
         for (var row = 0; row < this.fieldSize; ++row) {
             for (var col = 0; col < this.fieldSize; ++col) {
-                var cell = this.createCellView(row, col, cellSize, cellSizeWithMargins);
+                var cell = this.createCellView(row, col, cellSize);
                 this.gridView[row][col] = cell;
                 this.addChild(cell);
             }
-
-            var yPos = this.gridView[row][0].getYPos();
-            this.rowCellBorders.push([yPos, yPos + cellSizeWithMargins.height]);
-            var xPos = this.gridView[0][row].getXPos();
-            this.colCellBorders.push([xPos, xPos + cellSizeWithMargins.width]);
         }
         this.setContentSize(contentSize);
         this.setAnchorPoint(cc.p(0, 0));
     },
 
-    createCellView: function(row, col, cellSize, cellSizeWithMargins) {
-        var xPos = Game.X_MARGIN / 4 + col * cellSize.width;
-        var yPos = Game.Y_MARGIN / 4 + (this.fieldSize - row - 1) * cellSize.height;
-        var cell = new CellView(cc.p(row, col), cc.p(xPos, yPos), cellSizeWithMargins);
-
-        return cell;
+    getCellSizeWithMargins: function() {
+        return this.cellSizeWithMargins;
     },
 
-    updateView: function(coord, res, computerTurn) {
-        this.gridView[coord.x][coord.y].updateCellView(computerTurn);
-        //fire field changed event
+    createCellView: function(row, col, cellSize) {
+        var xPos = Game.X_MARGIN / 4 + col * cellSize.width;
+        var yPos = Game.Y_MARGIN / 4 + (this.fieldSize - row - 1) * cellSize.height;
+        return new CellView(cc.p(row, col), cc.p(xPos, yPos), this.cellSizeWithMargins);
+    },
+
+    onUpdate: function(callback) {
+        var updateInfo = callback.getUserData();
+        var coord = updateInfo.coord;
+        this.gridView[coord.x][coord.y].updateCellView(updateInfo.computerTurn);
+        return true;
+    },
+
+    onComputerTurn: function(callback) {
+        cc.log("Computer's turn!");
+        return true;
     },
 
     get: function(coord) {

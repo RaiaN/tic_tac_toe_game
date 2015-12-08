@@ -9,7 +9,6 @@ ClickResult = {
 var GridModel = cc.Node.extend({
     fieldSize : null,
     field : null,
-    gridView : null,
 
     playerSign : 1,
     playerCounts : null,
@@ -18,12 +17,14 @@ var GridModel = cc.Node.extend({
     totalCount : null,
     totalCells : null,
 
+    playerScore : 0,
+    computerScore : 0,
+
     MAIN_DIAG_INDEX : -1,
     OTHER_DIAG_INDEX : -1,
 
-    ctor: function(fieldSize, gridView) {
+    ctor: function(fieldSize) {
         this._super();
-        this.gridView = gridView;
 
         this.fieldSize = fieldSize;
         this.field = new Array(fieldSize);
@@ -45,12 +46,6 @@ var GridModel = cc.Node.extend({
 
         this.MAIN_DIAG_INDEX = 2 * this.fieldSize;
         this.OTHER_DIAG_INDEX = 2 * this.fieldSize + 1;
-    },
-
-    onCellClick: function(coord) {
-        var computerTurn = false;
-        var res = this.processClick(coord, computerTurn);
-        this.updateView(coord, res, computerTurn);
     },
 
     findEmptyCell: function() {
@@ -105,18 +100,41 @@ var GridModel = cc.Node.extend({
         return ClickResult.NEXT_TURN;
     },
 
-    updateView: function(pos, res, computerTurn) {
+    updateView: function(coord, res, computerTurn) {
         if (res == ClickResult.TRY_AGAIN) {
             return;
         }
-        this.gridView.updateView(pos, res, computerTurn);
+        var event = new cc.EventCustom(Game.UPDATE_VIEW_EVENT);
+        event.setUserData({res: res, coord: coord, computerTurn: computerTurn});
+        cc.eventManager.dispatchEvent(event);
+    },
 
-        if (res == ClickResult.VICTORY_COMPUTER) {
-            this.gridView.showDefeatMessage();
-        } else if (res == ClickResult.VICTORY_PLAYER) {
-            this.gridView.showVictoryMessage();
-        } else if (res == ClickResult.DRAW) {
-            this.gridView.showDrawMessage();
+    onCellClick: function(callback) {
+        var computerTurn = false;
+        var coord = callback.getUserData().coord;
+        var res = this.processClick(coord, computerTurn);
+        this.updateView(coord, res, computerTurn);
+        return true;
+    },
+
+    onCheckGameState: function(callback) {
+        var res = callback.getUserData().res;
+        var computerTurn = callback.getUserData().computerTurn;
+
+        if (res > 1) {
+            this.playerScore += (res == ClickResult.VICTORY_PLAYER);
+            this.computerScore += (res == ClickResult.VICTORY_COMPUTER);
+
+            var gameOverEvent = new cc.EventCustom(Game.GAME_OVER_EVENT);
+            gameOverEvent.setUserData({res: res, playerScore: this.playerScore, computerScore: this.computerScore});
+            cc.eventManager.dispatchEvent(gameOverEvent);
         }
+
+        if (!computerTurn) {
+            var computerTurnEvent = new cc.EventCustom(Game.COMPUTER_TURN_EVENT);
+            cc.eventManager.dispatchEvent(computerTurnEvent);
+        }
+
+        return true;
     }
 });

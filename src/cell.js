@@ -3,7 +3,6 @@ var CellView = cc.Layer.extend({
     position : null,
     size : null,
     colorLayer : null,
-    gridModel : null,
 
     ctor: function (coord, pos, cellSize) {
         this._super();
