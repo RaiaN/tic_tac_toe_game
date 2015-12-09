@@ -55,11 +55,9 @@ var GridView = cc.Node.extend({
     },
 
     onComputerTurn: function(callback) {
-        cc.log("Computer's turn!"); //TODO Add some temporary animation instead?
         return true;
     },
 
     onGameOver: function() {
-        cc.log('Game over grid view');
     },
 });

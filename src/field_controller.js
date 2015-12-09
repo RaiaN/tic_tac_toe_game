@@ -1,6 +1,8 @@
 var FieldController = cc.Node.extend({
     gamePause: false,
 
+    audioController : null,
+
     gridModel : null,
     gridView : null,
     scoreboardView : null,
@@ -13,6 +15,8 @@ var FieldController = cc.Node.extend({
     ctor: function() {
         this._super();
         this.init();
+
+        this.audioController = new AudioController();
 
         this.scoreboardView = new ScoreboardView();
         this.addChild(this.scoreboardView);
@@ -50,6 +54,7 @@ var FieldController = cc.Node.extend({
             eventName: Game.CELL_CLICK_EVENT,
             callback: function (callback) {
                 self.gridModel.onCellClick(callback);
+                self.audioController.onClick(callback);
             }
         });
 
@@ -76,7 +81,6 @@ var FieldController = cc.Node.extend({
             callback: function (callback) {
                 self.gridView.onComputerTurn(callback);
                 self.gridModel.simulateClick(callback);
-                cc.audioEngine.playEffect(res.ClickSound_wav);
             }
         });
 
@@ -84,6 +88,7 @@ var FieldController = cc.Node.extend({
             event: cc.EventListener.CUSTOM,
             eventName: Game.GAME_OVER_EVENT,
             callback: function (callback) {
+                self.audioController.onGameOver(callback);
                 self.scoreboardView.onGameOver(callback);
                 self.gridView.onGameOver();
                 self.onGameOver(callback);
@@ -120,8 +125,6 @@ var FieldController = cc.Node.extend({
         var cellClickEvent = new cc.EventCustom(Game.CELL_CLICK_EVENT);
         cellClickEvent.setUserData({coord: coord});
         cc.eventManager.dispatchEvent(cellClickEvent);
-
-        cc.audioEngine.playEffect(res.ClickSound_wav);
         return true;
     },
 
@@ -138,22 +141,7 @@ var FieldController = cc.Node.extend({
     onGameOver: function(callback) {
         cc.director.pause();
         this.gamePause = true;
-
-        var result = callback.getUserData().res;
-        switch(result) {
-            case ClickResult.VICTORY_COMPUTER: {
-                cc.audioEngine.playEffect(res.DefeatSound_wav, false);
-                break;
-            }
-            case ClickResult.VICTORY_PLAYER: {
-                cc.audioEngine.playEffect(res.VictorySound_wav, false);
-                break;
-            }
-            case ClickResult.DRAW: {
-                cc.audioEngine.playEffect(res.DrawSound_wav, false);
-            }
-        }
-        this.addChild(new MenuGameOver(result));
+        this.addChild(new MenuGameOver(callback.getUserData().res));
     },
 
     getCellCoordByClick: function(cursorPos) {

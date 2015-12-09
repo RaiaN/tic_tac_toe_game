@@ -17,11 +17,13 @@
         "src/background.js",
         "src/cell.js",
         "src/field_controller.js",
+        "src/game_config.js",
         "src/game_screen.js",
         "src/grid_model.js",
         "src/grid_view.js",
         "src/scoreboard_view.js",
         "src/menu_game_over.js",
-        "src/game_state.js"
+        "src/game_state.js",
+        "src/audio_controller.js"
     ]
 }
