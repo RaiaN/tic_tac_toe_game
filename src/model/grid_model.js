@@ -27,7 +27,7 @@ var GridModel = cc.Node.extend({
         this.field = new Array(fieldSize);
         for (var row = 0; row < fieldSize; ++row) {
             this.field[row] = new Array(fieldSize);
-            this.field[row].fill(0);
+            this.fill(this.field[row], 0);
         }
         this.init();
     },
@@ -35,14 +35,20 @@ var GridModel = cc.Node.extend({
     init: function() {
         var countsLen = 2 * (this.fieldSize + 1);
         this.playerCounts = new Array(countsLen);
-        this.playerCounts.fill(0);
+        this.fill(this.playerCounts, 0);
         this.computerCounts = new Array(countsLen);
-        this.computerCounts.fill(0);
+        this.fill(this.computerCounts, 0);
         this.totalCount = 0;
 
         this.totalCells = this.fieldSize * this.fieldSize;
         this.MAIN_DIAG_INDEX = 2 * this.fieldSize;
         this.OTHER_DIAG_INDEX = 2 * this.fieldSize + 1;
+    },
+
+    fill: function(arr, val) {
+        for (var ind = 0; ind < arr.length; ++ind) {
+            arr[ind] = val;
+        }
     },
 
     findEmptyCell: function() {

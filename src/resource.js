@@ -15,11 +15,11 @@ var res = {
     O_png : "res/img/o.png",
 
     NewGameSound_mp3 : "res/sound/new_game.mp3",
-    DefeatSound_wav : "res/sound/defeat.wav",
-    VictorySound_wav : "res/sound/victory.wav",
-    DrawSound_wav : "res/sound/draw.wav",
+    DefeatSound_wav : "res/sound/defeat.mp3",
+    VictorySound_wav : "res/sound/victory.mp3",
+    DrawSound_wav : "res/sound/draw.mp3",
     
-    ClickSound_wav : "res/sound/click_sound.wav"
+    ClickSound_wav : "res/sound/click_sound.mp3"
 };
 
 var g_resources = [];
