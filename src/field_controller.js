@@ -25,7 +25,6 @@ var FieldController = cc.Node.extend({
         this.prepareCustomEvents();
 
         cc.audioEngine.playEffect(res.NewGameSound_mp3, false);
-
         return true;
     },
 
@@ -118,13 +117,11 @@ var FieldController = cc.Node.extend({
         if (coord.x == -1 || coord.y == -1) {
             return;
         }
-
         var cellClickEvent = new cc.EventCustom(Game.CELL_CLICK_EVENT);
         cellClickEvent.setUserData({coord: coord});
         cc.eventManager.dispatchEvent(cellClickEvent);
 
         cc.audioEngine.playEffect(res.ClickSound_wav);
-
         return true;
     },
 
@@ -143,15 +140,12 @@ var FieldController = cc.Node.extend({
         this.gamePause = true;
 
         var result = callback.getUserData().res;
-        var message = Game.DRAW_MSG;
         switch(result) {
             case ClickResult.VICTORY_COMPUTER: {
-                message = Game.DEFEAT_MSG;
                 cc.audioEngine.playEffect(res.DefeatSound_wav, false);
                 break;
             }
             case ClickResult.VICTORY_PLAYER: {
-                message = Game.VICTORY_MSG;
                 cc.audioEngine.playEffect(res.VictorySound_wav, false);
                 break;
             }
@@ -159,7 +153,7 @@ var FieldController = cc.Node.extend({
                 cc.audioEngine.playEffect(res.DrawSound_wav, false);
             }
         }
-        this.addChild(new MenuGameOver(message));
+        this.addChild(new MenuGameOver(result));
     },
 
     getCellCoordByClick: function(cursorPos) {

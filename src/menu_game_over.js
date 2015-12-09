@@ -1,16 +1,23 @@
 var MenuGameOver = cc.Layer.extend({
-    ctor: function (message) {
+    ctor: function (result) {
         this._super();
-        this.addChild(this.createMenu(message));
+        this.addChild(this.createMenu(result));
     },
 
-    createMenu : function(message) {
-        var centerPos = cc.p(cc.winSize.width / 2, cc.winSize.height / 2);
-        cc.MenuItemFont.setFontSize(Game.FONT_SIZE);
-
-        var titleLabel =  new cc.LabelTTF(message, "Arial", 2 * Game.FONT_SIZE);
-        titleLabel.setColor(cc.color.RED);
-        var menuItemLabel = new cc.MenuItemLabel(titleLabel, function(e) {}, this);
+    createMenu : function(result) {
+        var resource = null;
+        switch (result) {
+            case ClickResult.VICTORY_COMPUTER: {resource = res.DefeatCaption_png; break; }
+            case ClickResult.VICTORY_PLAYER: {resource = res.VictoryCaption_png; break; }
+            case ClickResult.DRAW: {resource = res.DrawCaption_png; }
+        }
+        var menuItemTitle = new cc.MenuItemSprite
+        (
+            new cc.Sprite(resource),
+            new cc.Sprite(resource),
+            null,
+            this
+        );
         var menuItemRestart = new cc.MenuItemSprite
         (
             new cc.Sprite(res.RestartNotPressed_png),
@@ -18,9 +25,10 @@ var MenuGameOver = cc.Layer.extend({
             this.onRestart,
             this
         );
-        var menu = new cc.Menu(menuItemLabel, menuItemRestart);
+        var menu = new cc.Menu(menuItemTitle, menuItemRestart);
+        var centerPos = cc.p(cc.winSize.width / 2, cc.winSize.height / 2);
         menu.setPosition(centerPos);
-        menu.alignItemsVerticallyWithPadding(5);
+        menu.alignItemsVerticallyWithPadding(-4.0);
         return menu;
     },
 

@@ -5,7 +5,6 @@ Game = {
     Y_MARGIN : 20,
     FONT_SIZE : 28,
 
-    MenuTitle: "Tic-tac-toe game",
     MenuStartButtonCaption: "Start",
     MenuExitButtonCaption: "Exit",
     PLAYER_NAME: "Player",
@@ -16,11 +15,7 @@ Game = {
     CHECK_GAME_STATE_EVENT: "check_game_state_event",
     COMPUTER_TURN_EVENT: "computer_turn_event",
     GAME_OVER_EVENT: "game_over_event",
-    NEW_GAME_EVENT: "new_game_event",
-
-    DRAW_MSG: "Draw!",
-    VICTORY_MSG: "Victory!",
-    DEFEAT_MSG: "Defeat!"
+    NEW_GAME_EVENT: "new_game_event"
 };
 
 var GameScreenLayer = cc.Layer.extend({
