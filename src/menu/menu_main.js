@@ -40,7 +40,7 @@ var MainMenuLayer = cc.Layer.extend({
     },
 
     onClose: function(callback) {
-        var menu = callback.getCurrentTarget();
+        cc.director.end();
     }
 });
 
