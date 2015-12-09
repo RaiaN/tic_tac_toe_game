@@ -54,7 +54,6 @@ var FieldController = cc.Node.extend({
             eventName: Game.CELL_CLICK_EVENT,
             callback: function (callback) {
                 self.gridModel.onCellClick(callback);
-                self.audioController.onClick(callback);
             }
         });
 
@@ -64,6 +63,7 @@ var FieldController = cc.Node.extend({
             callback: function (callback) {
                 self.gridView.onUpdate(callback);
                 self.onUpdate(callback);
+                self.audioController.onClick(callback);
             }
         });
 
@@ -111,12 +111,28 @@ var FieldController = cc.Node.extend({
         }
     },
 
+    findInd : function(pos, cellBorders) {
+        for (var ind = 0; ind < cellBorders.length; ++ind) {
+            if (cellBorders[ind][0] <= pos && pos <= cellBorders[ind][1]) {
+                return ind;
+            }
+        }
+        return -1;
+    },
+
+    getCellCoordByClick: function(cursorPos) {
+        var xPos = cursorPos.x;
+        var yPos = cursorPos.y;
+        var row = this.findInd(yPos, this.rowCellBorders);
+        var col = this.findInd(xPos, this.colCellBorders);
+        return cc.p(row, col);
+    },
+
     onClick: function(callback) {
         var fieldController = callback.getCurrentTarget();
         if (fieldController.gamePause) {
             return;
         }
-
         var cursorPos = callback.getLocation();
         var coord = fieldController.getCellCoordByClick(cursorPos);
         if (coord.x == -1 || coord.y == -1) {
@@ -134,7 +150,6 @@ var FieldController = cc.Node.extend({
         var checkGameStateEvent = new cc.EventCustom(Game.CHECK_GAME_STATE_EVENT);
         checkGameStateEvent.setUserData({res: userData.res, computerTurn: userData.computerTurn});
         cc.eventManager.dispatchEvent(checkGameStateEvent);
-
         return true;
     },
 
@@ -142,23 +157,6 @@ var FieldController = cc.Node.extend({
         cc.director.pause();
         this.gamePause = true;
         this.addChild(new MenuGameOver(callback.getUserData().res));
-    },
-
-    getCellCoordByClick: function(cursorPos) {
-        var xPos = cursorPos.x;
-        var yPos = cursorPos.y;
-        var row = this.findInd(yPos, this.rowCellBorders);
-        var col = this.findInd(xPos, this.colCellBorders);
-
-        return cc.p(row, col);
-    },
-
-    findInd : function(pos, cellBorders) {
-        for (var ind = 0; ind < cellBorders.length; ++ind) {
-            if (cellBorders[ind][0] <= pos && pos <= cellBorders[ind][1]) {
-                return ind;
-            }
-        }
-        return -1;
+        return true;
     }
 });

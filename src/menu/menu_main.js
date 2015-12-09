@@ -1,12 +1,13 @@
-var MenuLayer = cc.Layer.extend({
+var MainMenuLayer = cc.Layer.extend({
+    menu : null,
+
     ctor: function () {
         this._super();
-        this.addChild(this.createMenu());
+        this.createMenu()
+        this.addChild(this.menu);
     },
 
     createMenu : function() {
-        var windowSize = cc.winSize;
-
         var menuItemLabel = new cc.MenuItemSprite
         (
             new cc.Sprite(res.Title_png),
@@ -25,32 +26,30 @@ var MenuLayer = cc.Layer.extend({
         (
             new cc.Sprite(res.ExitButton_png),
             new cc.Sprite(res.ExitButton_png),
-            this.onExit,
+            this.onClose,
             this
         );
 
-        var menu = new cc.Menu(menuItemLabel, menuItemStart, menuItemExit);
-        menu.setPosition(cc.p(cc.winSize.width / 2, cc.winSize.height / 2));
-        menu.alignItemsVerticallyWithPadding(5);
-
-        return menu;
+        this.menu = new cc.Menu(menuItemLabel, menuItemStart, menuItemExit);
+        this.menu.setPosition(cc.p(cc.winSize.width / 2, cc.winSize.height / 2));
+        this.menu.alignItemsVerticallyWithPadding(5);
     },
 
     onPlay: function(callback) {
         cc.director.runScene(new GameScreenScene());
     },
 
-    onExit: function(callback) {
-        //cc.director.end();
+    onClose: function(callback) {
+        var menu = callback.getCurrentTarget();
     }
 });
 
 
-var MenuScene = cc.Scene.extend({
+var MainMenuScene = cc.Scene.extend({
     onEnter: function () {
         this._super();
 
         this.addChild(new BackgroundLayer());
-        this.addChild(new MenuLayer());
+        this.addChild(new MainMenuLayer());
     }
 });
