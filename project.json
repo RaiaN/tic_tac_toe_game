@@ -12,18 +12,18 @@
     "modules" : ["cocos2d", "extensions"],
 
     "jsList" : [
-        "src/menu_layer.js",
+        "src/menu/menu_main.js",
         "src/resource.js",
         "src/background.js",
-        "src/cell.js",
-        "src/field_controller.js",
+        "src/view/cell_view.js",
+        "src/controller/field_controller.js",
         "src/game_config.js",
         "src/game_screen.js",
-        "src/grid_model.js",
-        "src/grid_view.js",
-        "src/scoreboard_view.js",
-        "src/menu_game_over.js",
-        "src/game_state.js",
-        "src/audio_controller.js"
+        "src/model/grid_model.js",
+        "src/view/grid_view.js",
+        "src/view/scoreboard_view.js",
+        "src/menu/menu_game_over.js",
+        "src/model/game_state.js",
+        "src/controller/audio_controller.js"
     ]
 }
