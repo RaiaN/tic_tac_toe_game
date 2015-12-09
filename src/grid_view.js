@@ -33,14 +33,18 @@ var GridView = cc.Node.extend({
         this.setAnchorPoint(cc.p(0, 0));
     },
 
-    getCellSizeWithMargins: function() {
-        return this.cellSizeWithMargins;
-    },
-
     createCellView: function(row, col, cellSize) {
         var xPos = Game.X_MARGIN / 4 + col * cellSize.width;
         var yPos = Game.Y_MARGIN / 4 + (this.fieldSize - row - 1) * cellSize.height;
         return new CellView(cc.p(row, col), cc.p(xPos, yPos), this.cellSizeWithMargins);
+    },
+
+    get: function(coord) {
+        return this.gridView[coord.x][coord.y];
+    },
+
+    getCellSizeWithMargins: function() {
+        return this.cellSizeWithMargins;
     },
 
     onUpdate: function(callback) {
@@ -51,23 +55,11 @@ var GridView = cc.Node.extend({
     },
 
     onComputerTurn: function(callback) {
-        cc.log("Computer's turn!");
+        cc.log("Computer's turn!"); //TODO Add some temporary animation instead?
         return true;
     },
 
-    get: function(coord) {
-        return this.gridView[coord.x][coord.y];
+    onGameOver: function() {
+        cc.log('Game over grid view');
     },
-
-    showDefeatMessage: function() {
-        alert('DEFEAT!');
-    },
-
-    showVictoryMessage: function() {
-        alert('VICTORY!');
-    },
-
-    showDrawMessage: function() {
-        alert('DRAW!');
-    }
 });

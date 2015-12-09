@@ -8,5 +8,9 @@ var BackgroundLayer = cc.Layer.extend({
         spriteBackround.setPosition(centerPos);
 
         this.addChild(spriteBackround);
+    },
+
+    setContentSize: function(size) {
+        this.setContentSize(size);
     }
 })

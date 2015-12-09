@@ -1,4 +1,6 @@
 var FieldController = cc.Node.extend({
+    gamePause: false,
+
     gridModel : null,
     gridView : null,
     scoreboardView : null,
@@ -13,13 +15,16 @@ var FieldController = cc.Node.extend({
         this.init();
 
         this.scoreboardView = new ScoreboardView();
+        this.addChild(this.scoreboardView);
+
         this.gridView = new GridView(Game.CELLS_PER_SIDE, this.contentSize);
         this.fillCellBorders(this.gridView.getCellSizeWithMargins());
-        this.gridModel = new GridModel(Game.CELLS_PER_SIDE, this.gridView);
-        this.addChild(this.scoreboardView);
         this.addChild(this.gridView);
 
+        this.gridModel = new GridModel(Game.CELLS_PER_SIDE, this.gridView);
         this.prepareCustomEvents();
+
+        cc.audioEngine.playEffect(res.NewGameSound_mp3, false);
 
         return true;
     },
@@ -32,44 +37,64 @@ var FieldController = cc.Node.extend({
         this.setAnchorPoint(cc.p(0, 0));
     },
 
+    nextTurn: function() {
+        if (Math.random() > 0.5) {
+            var computerTurnEvent = new cc.EventCustom(Game.COMPUTER_TURN_EVENT);
+            cc.eventManager.dispatchEvent(computerTurnEvent);
+        }
+    },
+
     prepareCustomEvents: function() {
         var self = this;
         var cellClickListener = cc.EventListener.create({
             event: cc.EventListener.CUSTOM,
             eventName: Game.CELL_CLICK_EVENT,
-            callback: function(callback) { self.gridModel.onCellClick(callback); }
+            callback: function (callback) {
+                self.gridModel.onCellClick(callback);
+            }
         });
-        cc.eventManager.addListener(cellClickListener, 1);
 
         var updateListener = cc.EventListener.create({
             event: cc.EventListener.CUSTOM,
             eventName: Game.UPDATE_VIEW_EVENT,
-            callback: function(callback) { self.gridView.onUpdate(callback);
-                                           self.onUpdate(callback); }
+            callback: function (callback) {
+                self.gridView.onUpdate(callback);
+                self.onUpdate(callback);
+            }
         });
-        cc.eventManager.addListener(updateListener, 1);
 
         var checkGameStateListener = cc.EventListener.create({
             event: cc.EventListener.CUSTOM,
             eventName: Game.CHECK_GAME_STATE_EVENT,
-            callback: function(callback) { self.gridModel.onCheckGameState(callback); }
+            callback: function (callback) {
+                self.gridModel.onCheckGameState(callback);
+            }
         });
-        cc.eventManager.addListener(checkGameStateListener, 1);
 
-        var continueGameEvent = cc.EventListener.create({
+        var computerTurnListener = cc.EventListener.create({
             event: cc.EventListener.CUSTOM,
             eventName: Game.COMPUTER_TURN_EVENT,
-            callback: function(callback) { self.gridView.onComputerTurn(callback);
-                                           self.gridModel.simulateClick(callback); }
+            callback: function (callback) {
+                self.gridView.onComputerTurn(callback);
+                self.gridModel.simulateClick(callback);
+                cc.audioEngine.playEffect(res.ClickSound_wav);
+            }
         });
-        cc.eventManager.addListener(continueGameEvent, 1);
 
         var gameOverListener = cc.EventListener.create({
             event: cc.EventListener.CUSTOM,
             eventName: Game.GAME_OVER_EVENT,
-            callback: function(callback) { self.scoreboardView.onGameOver(callback);
-                                           self.onGameOver(callback); }
+            callback: function (callback) {
+                self.scoreboardView.onGameOver(callback);
+                self.gridView.onGameOver();
+                self.onGameOver(callback);
+            }
         });
+
+        cc.eventManager.addListener(cellClickListener, 1);
+        cc.eventManager.addListener(updateListener, 1);
+        cc.eventManager.addListener(checkGameStateListener, 1);
+        cc.eventManager.addListener(computerTurnListener, 1);
         cc.eventManager.addListener(gameOverListener, 1);
     },
 
@@ -84,7 +109,9 @@ var FieldController = cc.Node.extend({
 
     onClick: function(callback) {
         var fieldController = callback.getCurrentTarget();
-        //cc.eventManager.pauseTarget(fieldController, false);
+        if (fieldController.gamePause) {
+            return;
+        }
 
         var cursorPos = callback.getLocation();
         var coord = fieldController.getCellCoordByClick(cursorPos);
@@ -95,6 +122,9 @@ var FieldController = cc.Node.extend({
         var cellClickEvent = new cc.EventCustom(Game.CELL_CLICK_EVENT);
         cellClickEvent.setUserData({coord: coord});
         cc.eventManager.dispatchEvent(cellClickEvent);
+
+        cc.audioEngine.playEffect(res.ClickSound_wav);
+
         return true;
     },
 
@@ -104,22 +134,32 @@ var FieldController = cc.Node.extend({
         var checkGameStateEvent = new cc.EventCustom(Game.CHECK_GAME_STATE_EVENT);
         checkGameStateEvent.setUserData({res: userData.res, computerTurn: userData.computerTurn});
         cc.eventManager.dispatchEvent(checkGameStateEvent);
+
         return true;
     },
 
     onGameOver: function(callback) {
-        var res = callback.getUserData().res;
+        cc.director.pause();
+        this.gamePause = true;
 
-        var newGameEvent = new cc.EventCustom(Game.NEW_GAME_EVENT);
-        cc.eventManager.dispatchEvent(newGameEvent);
-
-        if (res == ClickResult.VICTORY_COMPUTER) {
-            this.onDefeat();
-        } else if (res == ClickResult.VICTORY_PLAYER) {
-            this.onVictory();
-        } else if (res == ClickResult.DRAW) {
-            this.onDraw();
+        var result = callback.getUserData().res;
+        var message = Game.DRAW_MSG;
+        switch(result) {
+            case ClickResult.VICTORY_COMPUTER: {
+                message = Game.DEFEAT_MSG;
+                cc.audioEngine.playEffect(res.DefeatSound_wav, false);
+                break;
+            }
+            case ClickResult.VICTORY_PLAYER: {
+                message = Game.VICTORY_MSG;
+                cc.audioEngine.playEffect(res.VictorySound_wav, false);
+                break;
+            }
+            case ClickResult.DRAW: {
+                cc.audioEngine.playEffect(res.DrawSound_wav, false);
+            }
         }
+        this.addChild(new MenuGameOver(message));
     },
 
     getCellCoordByClick: function(cursorPos) {

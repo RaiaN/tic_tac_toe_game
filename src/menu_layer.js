@@ -4,7 +4,7 @@ var MenuLayer = cc.Layer.extend({
         this.addChild(this.createMenu());
     },
 
-    createMenu : function constructMenu() {
+    createMenu : function() {
         var windowSize = cc.winSize;
 
         var menuTitle = new ccui.Text(Game.MenuTitle, "Arial", Game.FONT_SIZE);
@@ -39,7 +39,7 @@ var MenuLayer = cc.Layer.extend({
     },
 
     onExit: function(callback) {
-
+        //cc.director.end();
     }
 });
 

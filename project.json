@@ -20,6 +20,8 @@
         "src/game_screen.js",
         "src/grid_model.js",
         "src/grid_view.js",
-        "src/scoreboard_view.js"
+        "src/scoreboard_view.js",
+        "src/menu_game_over.js",
+        "src/game_state.js"
     ]
 }

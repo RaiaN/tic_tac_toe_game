@@ -1,28 +1,53 @@
 var CellView = cc.Layer.extend({
     coord : null,
     position : null,
-    size : null,
+    cellSize : null,
+    cellLayer : null,
     colorLayer : null,
+
+    xSprite : null,
+    oSprite : null,
+    xSpriteScale : null,
+    oSpriteScale : null,
 
     ctor: function (coord, pos, cellSize) {
         this._super();
         this.coord = coord;
         this.position = pos;
-        this.size = cellSize;
+        this.cellSize = cellSize;
 
         this.colorLayer = new cc.LayerColor();
-        this.colorLayer.setContentSize(cellSize);
-        this.colorLayer.setAnchorPoint(cc.p(0,0));
-        this.colorLayer.setPosition(pos);
+        this.xSprite = new cc.Sprite(res.X_png);
+        this.oSprite = new cc.Sprite(res.O_png);
+        this.cellLayer = new cc.LayerMultiplex([this.colorLayer, this.xSprite, this.oSprite]);
+        this.init();
+
+        this.addChild(this.cellLayer);
+    },
+
+    init: function() {
+        this.colorLayer.setContentSize(this.cellSize);
         this.colorLayer.setColor(cc.color.GREEN);
 
-        var label = new cc.LabelTTF("OK", "Arial", 25);
-        label.setAnchorPoint(cc.p(0.5, 0.5));
-        label.setPosition(cc.p(cellSize.width / 2, cellSize.height / 2));
-        label.setColor(cc.color.BLUE);
+        this.xSprite.setAnchorPoint(cc.p(0,0));
+        this.xSprite.setPosition(cc.p(0,0));
+        this.oSprite.setAnchorPoint(cc.p(0,0));
+        this.oSprite.setPosition(cc.p(0,0));
 
-        this.colorLayer.addChild(label);
-        this.addChild(this.colorLayer);
+        this.cellLayer.setContentSize(this.cellSize);
+        this.cellLayer.setAnchorPoint(cc.p(0,0));
+        this.cellLayer.setPosition(this.position);
+
+        this.xSpriteScale = this.calcSpriteScale(this.xSprite);
+        this.oSpriteScale = this.calcSpriteScale(this.oSprite);
+    },
+
+    calcSpriteScale: function(sprite) {
+        var spriteSize = sprite.getContentSize();
+        var xScale = this.cellSize.width / spriteSize.width;
+        var yScale = this.cellSize.height / spriteSize.height;
+        sprite.setScale(xScale, yScale);
+        return {xScale: xScale, yScale: yScale}
     },
 
     getXPos: function() {
@@ -34,10 +59,14 @@ var CellView = cc.Layer.extend({
     },
 
     updateCellView: function(computerTurn) {
-        this.changeCellColorLayer(computerTurn);
+        if (computerTurn) {
+            this.cellLayer.switchTo(1);
+        } else {
+            this.cellLayer.switchTo(2);
+        }
     },
 
-    changeCellColorLayer: function(computerTurn) {
-        this.colorLayer.setColor(computerTurn ? cc.color.WHITE : cc.color.YELLOW);
+    resetColorLayer: function(color) {
+        this.cellLayer.setColor(color);
     }
 });

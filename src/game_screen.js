@@ -17,6 +17,10 @@ Game = {
     COMPUTER_TURN_EVENT: "computer_turn_event",
     GAME_OVER_EVENT: "game_over_event",
     NEW_GAME_EVENT: "new_game_event",
+
+    DRAW_MSG: "Draw!",
+    VICTORY_MSG: "Victory!",
+    DEFEAT_MSG: "Defeat!"
 };
 
 var GameScreenLayer = cc.Layer.extend({
@@ -24,7 +28,10 @@ var GameScreenLayer = cc.Layer.extend({
 
     ctor: function() {
         this._super();
+        cc.eventManager.removeAllListeners();
+
         this.fieldController = new FieldController();
+        this.fieldController.nextTurn();
         cc.eventManager.addListener({
             event: cc.EventListener.MOUSE,
             onMouseDown: this.fieldController.onClick
@@ -36,10 +43,9 @@ var GameScreenLayer = cc.Layer.extend({
 });
 
 var GameScreenScene = cc.Scene.extend({
-   onEnter: function() {
-       this._super();
-
-       this.addChild(new BackgroundLayer());
-       this.addChild(new GameScreenLayer());
-   }
+    onEnter: function() {
+        this._super();
+        this.addChild(new BackgroundLayer());
+        this.addChild(new GameScreenLayer());
+    }
 });
