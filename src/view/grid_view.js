@@ -1,10 +1,12 @@
 var GridView = cc.Node.extend({
     gridView : null,
     fieldSize : null,
+    playerForX : null,
 
-    ctor: function(fieldSize, contentSize) {
+    ctor: function(fieldSize, contentSize, playerForX) {
         this._super();
         this.fieldSize = fieldSize;
+        this.playerForX = playerForX;
 
         this.gridView = new Array(fieldSize);
         for (var row = 0; row < fieldSize; ++row) {
@@ -50,7 +52,7 @@ var GridView = cc.Node.extend({
     onUpdate: function(callback) {
         var updateInfo = callback.getUserData();
         var coord = updateInfo.coord;
-        this.gridView[coord.x][coord.y].updateCellView(updateInfo.computerTurn);
+        this.gridView[coord.x][coord.y].updateCellView(updateInfo.computerTurn, this.playerForX);
         return true;
     },
 

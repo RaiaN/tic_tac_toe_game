@@ -10,6 +10,9 @@ var CellView = cc.Layer.extend({
     xSpriteScale : null,
     oSpriteScale : null,
 
+    X_LAYER_IND : 1,
+    O_LAYER_IND : 2,
+
     ctor: function (coord, pos, cellSize) {
         this._super();
         this.coord = coord;
@@ -58,12 +61,9 @@ var CellView = cc.Layer.extend({
         return this.position.y;
     },
 
-    updateCellView: function(computerTurn) {
-        if (computerTurn) {
-            this.cellLayer.switchTo(1);
-        } else {
-            this.cellLayer.switchTo(2);
-        }
+    updateCellView: function(computerTurn, playerForX) {
+        var inds = [this.X_LAYER_IND, this.O_LAYER_IND];
+        this.cellLayer.switchTo(inds[computerTurn == playerForX ? 1 : 0]);
     },
 
     resetColorLayer: function(color) {
