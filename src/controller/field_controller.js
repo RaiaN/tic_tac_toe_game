@@ -21,7 +21,7 @@ var FieldController = cc.Node.extend({
         this.scoreboardView = new ScoreboardView();
         this.addChild(this.scoreboardView);
 
-        this.gridView = new GridView(Game.CELLS_PER_SIDE, this.contentSize);
+        this.gridView = new GridView(Game.CELLS_PER_SIDE, this.contentSize, Math.random() > 0.5);
         this.fillCellBorders(this.gridView.getCellSizeWithMargins());
         this.addChild(this.gridView);
 
