@@ -1,1 +1,1 @@
-Variation of tic-tac-toe game motivated by xzibit show
+Tic-tac-toe game on Cocos2D-js
