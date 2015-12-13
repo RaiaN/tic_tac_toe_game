@@ -51,7 +51,7 @@ var GridModel = cc.Node.extend({
         }
     },
 
-    findEmptyCell: function() {
+    chooseRandomEmptyCell: function() {
         var emptyCells = [];
         for (var x = 0; x < this.fieldSize; ++x) {
             for (var y = 0; y < this.fieldSize; ++y) {
@@ -64,9 +64,46 @@ var GridModel = cc.Node.extend({
         return emptyCells[rind];
     },
 
+    findBestPosition: function(counts) {
+        var maxVal = this.fieldSize - 1;
+        for (var row = 0; row < this.fieldSize; ++row) {
+            for (var col = 0; col < this.fieldSize; ++col) {
+                if (this.field[row][col] == 0 &&
+                    (counts[row] == maxVal || counts[this.fieldSize + col] == maxVal))
+                {
+                    return cc.p(row, col);
+                }
+            }
+        }
+        if (counts[this.MAIN_DIAG_INDEX] == maxVal) {
+            for (var ind = 0; ind < this.fieldSize; ++ind) {
+                if (this.field[ind][ind] == 0) {
+                    return cc.p(ind, ind);
+                }
+            }
+        }
+        if (counts[this.OTHER_DIAG_INDEX] == maxVal) {
+            for (var ind = 0; ind < this.fieldSize; ++ind) {
+                if (this.field[ind][this.fieldSize - ind - 1] == 0) {
+                    return cc.p(ind, this.fieldSize - ind - 1);
+                }
+            }
+        }
+
+        return cc.p(-1, -1);
+    },
+
     simulateClick: function() {
         var computerTurn = true;
-        var pos = this.findEmptyCell();
+
+        var pos = this.findBestPosition(this.computerCounts);
+        if (pos.x == -1) {
+            pos = this.findBestPosition(this.playerCounts);
+        }
+        if (pos.x == -1) {
+            pos = this.chooseRandomEmptyCell();
+        }
+
         var res = this.processClick(pos, computerTurn);
         this.updateView(pos, res, computerTurn);
     },
